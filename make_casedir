@@ -55,6 +55,6 @@ sed  -e "s|^! *nml_pre..*|!nml file for ${case}|" \
 printf "Submit and nml files modified\n"
 
 # Clean up
-rm ${damdir}/${case}/*_pre
+rm ${damdir}/${case}/*_pre*
 
 # End of script
