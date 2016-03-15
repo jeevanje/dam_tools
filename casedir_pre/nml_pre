@@ -1,0 +1,68 @@
+! nml_pre in casedir_pre
+
+&grid_nml
+nx_gl = 128
+ny_gl = 128
+nz_gl = 76
+&end
+
+&params_nml
+ivdata_path = '../verticalstats_zeroO3.nc'  ! Path rel to dam dir
+dx = 1000.   ! m
+dy = 1000.   ! m
+dt = 20.     ! s
+day = 0.0    ! Spring equinox
+nstop =259200   ! 60 days = 60*24*60*3 steps
+rk_order = 2
+&end
+
+&globalstats_nml
+globalstats_do     = .true.
+globalstats_start  = 0
+globalstats_period = 1080 ! 6 hours = 6*60*3 steps
+globalstats_end    = 259200
+globalstats_as_double = .true.
+&end
+
+&verticalstats_nml
+verticalstats_do     = .true.
+verticalstats_start  = 0
+verticalstats_period = 4320 ! 1 day
+verticalstats_end    = 259200
+verticalstats_as_double = .false.
+&end
+
+&snapshot_nml
+snapshot_do     = .true.
+snapshot_start  = 0  
+snapshot_period = 4320 ! 1 day
+snapshot_end    = 259200  ! day 5 
+snapshot_as_double = .false.
+&end
+
+&surface_nml
+surface_do = .true.
+bulk_surface_fluxes = .true.
+bulk_cd = 1.5e-3
+bulk_surface_u = 5.
+bulk_gustiness = 0.
+sst = 300.
+&end
+
+&radiation_nml
+radiation_do = .true.
+trace_path = 'trace_gases_zeroO3.nc'
+period = 540 ! Every 3 hours
+longitude = 0
+latitude  = 0
+diurnal_average = .true.
+advance_time = .false.
+&end
+
+&tracer_nml
+activity_do = .true.
+active_cutoff_w = 1.       ! m/s
+active_cutoff_qc = 1.e-5   ! kg/kg
+active_cutoff_b = 2.e-4    ! m/s^2
+&end
+

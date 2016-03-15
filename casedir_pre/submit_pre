@@ -1,0 +1,31 @@
+#!/bin/bash
+#SBATCH -J teststmpd         # Job Name
+#SBATCH -n 256                # Number of tasks (cores)
+#SBATCH -t 24:00:00          # Run time (hh:mm:ss) - 24 hours
+#SBATCH -p normal            # Queue name "normal"
+#SBATCH -e dam.err           # Name of the output file (eg. myMPI.oJobID)
+#SBATCH -o dam.out           # Name of the output file (eg. myMPI.oJobID)
+#SBATCH --mail-type ALL      # Opt in for email notifications
+#SBATCH --mail-user njeevanjee@lbl.gov  # User receiving emails 
+
+# Set the run path
+path=1.5e-3_72km_3km_301_noevap_agg
+
+# Installation configuration
+damname=dam
+damdir=${HOME}/fat/dam
+run="ibrun $damdir/$damname $path > $path/log"
+
+# Check that the path is of correct form
+if [ ! -d $damdir/$path ]
+then
+   echo "Error in resub: The directory $damdir/$path does not exist"
+   exit 1
+fi
+
+# Make directories
+mkdir -p $damdir/$path/data
+
+# Run DAM
+cd $damdir
+eval $run
