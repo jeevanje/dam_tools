@@ -9,9 +9,9 @@
 #===========================#
 
 # data, project, dam,  and case directories
-datadir=${WORK}
-project=fat
-damdir=~/${project}/dam
+datadir=${SCRATCH}
+project=rad_cooling
+damdir=~/edison/${project}/dam
 case=$1
 
 
