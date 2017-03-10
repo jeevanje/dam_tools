@@ -1,25 +1,26 @@
 ! nml_pre in casedir_pre
 
 &grid_nml
-nx_gl = 128
-ny_gl = 128
-nz_gl = 76
+nx_gl = 4
+ny_gl = 144
+nz_gl = 64
 &end
 
 &params_nml
-ivdata_path = '../verticalstats_zeroO3.nc'  ! Path rel to dam dir
-dx = 1000.   ! m
-dy = 1000.   ! m
+ivdata_path = 'casedir_pre/rce300_snapshot.nc'  ! Path rel to dam dir
+dx = 3000.   ! m
+dy = 3000.   ! m
 dt = 20.     ! s
 day = 0.0    ! Spring equinox
 nstop =259200   ! 60 days = 60*24*60*3 steps
 rk_order = 2
+dry_strip_do = .true.
 &end
 
 &globalstats_nml
 globalstats_do     = .true.
 globalstats_start  = 0
-globalstats_period = 1080 ! 6 hours = 6*60*3 steps
+globalstats_period = 4320 ! 1 day = 24*60*3 steps
 globalstats_end    = 259200
 globalstats_as_double = .true.
 &end
@@ -51,7 +52,7 @@ sst = 300.
 
 &radiation_nml
 radiation_do = .true.
-trace_path = 'trace_gases_zeroO3.nc'
+trace_path = 'trace_gases.nc'
 period = 540 ! Every 3 hours
 longitude = 0
 latitude  = 0
@@ -61,8 +62,27 @@ advance_time = .false.
 
 &tracer_nml
 activity_do = .true.
-active_cutoff_w = 0.       ! m/s
+active_cutoff_w = 1.       ! m/s
 active_cutoff_qc = 1.e-5   ! kg/kg
 active_cutoff_b = 0.    ! m/s^2
 &end
+
+&forcing_nml
+forcing_path = 'zero_uv_profile.nc'
+tendency_unudge%do = .true.
+tendency_unudge%timescale = 7200.
+tendency_vnudge%do = .true.
+tendency_vnudge%timescale = 7200.
+/
+
+&yzstats_nml
+yzstats_do = .true.
+yzstats_start = 0
+yzstats_period = 4320
+yzstats_end = 259200
+yzstats_as_double = .false.
+&end
+
+
+
 

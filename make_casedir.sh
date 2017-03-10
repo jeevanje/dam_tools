@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #===========================#
 # make_casedir              #
 #                           #
@@ -8,26 +10,29 @@
 #  name in submit script    #
 #===========================#
 
+
+
 # data, project, dam,  and case directories
-datadir=${SCRATCH}
-project=rad_cooling
-damdir=~/edison/${project}/dam
 case=$1
+datadir=$CTMP/$USER
+project=agg_co2
+damdir=~/${project}/dam
+casedir=${damdir}/${case}
+rundir=$CPERM/$USER/${project}/${case}
 
 
-# make case directory
-if [ ! -d "$case" ]; then  
-  cp -r casedir_pre ${case} # Copy casedir_pre to new dir
-  if [ -d "$case" ]; then
-     printf "Created case directory\n"
-  else
-     printf "Error in creating case directory\n"
-     exit
-  fi
+# make run directory
+if [ -d "$rundir" ]; then
+  rm -rf $rundir
+  printf "Removing old run directory \n"
+fi 	
+cp -r casedir_pre ${rundir} 
+if [ -d "$rundir" ]; then
+  printf "Created run directory\n"
 else
-  printf "Case directory already exists\n"
+  printf "Error in creating run directory\n"
+  exit
 fi
-
 
 # make data directory and link 
 if [ -d "${datadir}/${project}/${case}_data" ]; then
@@ -38,23 +43,29 @@ else
     printf "Error in creating data directory\n"
     exit
   fi
-  ln -s ${datadir}/${project}/${case}_data ${damdir}/${case}/data
 fi
 
+# make case directory and link
+if [ -d ${casedir} ]; then
+   rm -rf ${casedir}
+   printf "Removing old casedir and re-linking \n"
+fi
+ln -s  ${rundir} ${casedir}
+ln -s ${datadir}/${project}/${case}_data ${casedir}/data
 
 # modify submit file 
-sed   -e "s|\#SBATCH -J [a-zA-Z0-9]*|\#SBATCH -J ${case}|" \
+sed   -e "s|\#PBS -N [a-zA-Z0-9]*|\#PBS -N ${case}|" \
       -e "s|path=.*$|path=$case|" \
-       < $case/submit_pre > $case/submit 
+       < $casedir/submit_pre > $casedir/submit 
 
 
 # modify nml
 sed  -e "s|^! *nml_pre..*|!nml file for ${case}|" \
-     < ${damdir}/${case}/nml_pre > ${damdir}/${case}/nml
+     < ${casedir}/nml_pre > ${casedir}/nml
 
 printf "Submit and nml files modified\n"
 
 # Clean up
-rm ${damdir}/${case}/*_pre*
+#rm ${casedir}/*_pre*
 
 # End of script

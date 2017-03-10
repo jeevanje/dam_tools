@@ -1,6 +1,11 @@
-############### Script to restart DAM runs #################
+#!/bin/bash
 
-damdir=~/fat/dam
+#=============================#
+# Script to restart DAM runs  #
+#=============================#
+
+project=agg_co2
+damdir=~/$project/dam
 casedir=$1
 nprev=$2
 
@@ -26,4 +31,4 @@ sed -e "s|ivdata_path = .*|ivdata_path = \'${casedir}/data/snapshot${nprev}.nc\'
 mv nml_post nml
 
 # Submit job
-sbatch submit 
+msub submit 

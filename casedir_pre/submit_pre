@@ -1,31 +1,33 @@
 #!/bin/bash
-#SBATCH -J test              # Job Name
-#SBATCH -n 256               # Number of tasks (cores)
-#SBATCH -t 24:00:00          # Run time (hh:mm:ss) - 24 hours
-#SBATCH -p regular           # Queue name "regular"
-#SBATCH -e dam.err           # Name of the output file (eg. myMPI.oJobID)
-#SBATCH -o dam.out           # Name of the output file (eg. myMPI.oJobID)
-#SBATCH --mail-type ALL      # Opt in for email notifications
-#SBATCH --mail-user njeevanjee@lbl.gov  # User receiving emails 
+#PBS -N test               # Job Name
+#PBS -l nodes=1            # Number of tasks (cores)
+#PBS -l walltime=16:00:00  # Run time (hh:mm:ss) - 16 hours
+#PBS -l partition=c4
+#PBS -A gfdl_m             # Account
+#PBS -q batch              # Queue name
+#PBS -e dam.err            # Name of the output file (eg. myMPI.oJobID)
+#PBS -o dam.out            # Name of the output file (eg. myMPI.oJobID)
+#PBS -m abe
 
-# Set the run path
+# Set the case/path
 path=test
 
 # Installation configuration
-damname=dam
-damdir=${HOME}/edison/rad_cooling/dam
-run="srun -n 4 $damdir/$damname $path > $path/log"
+CPERM=/lustre/f1/unswept
+project=agg_co2
+projectdir=$CPERM/$USER/$project 
+run="aprun -n 36 $projectdir/dam $path > $path/log"
 
 # Check that the path is of correct form
-if [ ! -d $damdir/$path ]
+if [ ! -d $projectdir/$path ]
 then
-   echo "Error in resub: The directory $damdir/$path does not exist"
+   echo "Error in resub: The directory $projectdir/$path does not exist"
    exit 1
 fi
 
 # Make directories
-mkdir -p $damdir/$path/data
+mkdir -p $projectdir/$path/data
 
 # Run DAM
-cd $damdir
+cd $projectdir
 eval $run
